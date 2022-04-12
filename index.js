@@ -1,11 +1,8 @@
 var unirest = require('unirest')
 var SpotifyWebApi = require('spotify-web-api-node')
-var lineReader = require('line-reader')
-var fs = require('fs')
 var ChartIO = require('herochartio').ChartIO
 require("dotenv").config();
 
-lyrics = [];
 unirest.get("https://open.spotify.com/get_access_token?reason=transport&productType=web_player")
 	.headers({'Accept': 'application/json', 'Content-Type': 'application/json', 'User-Agent': 'spotify lyrics to clone hero', 'Cookie': `sp_dc=${process.env.sp_dc};`})
 	.send()
