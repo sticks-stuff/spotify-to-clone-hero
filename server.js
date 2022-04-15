@@ -58,7 +58,7 @@ app.post("/upload", upload.single("data"), (req, res) => {
 									chart.Events[parseInt(chart.secondsToPosition(element.startTimeMs / 1000))] = [
 										{ type: 'E', name: 'phrase_end' },
 										{ type: 'E', name: 'phrase_start' },
-										{ type: 'E', name: `lyric ${element.words}` }
+										{ type: 'E', name: `lyric ${element.words.replace(/"/g, "'\'").replace(/-/g, '=')}` } //double quotes no worky in ch so have to replace them and hyphens are used for sylables so have to replace those too
 									]
 								})
 								ChartIO.save(chart, `uploads/${req.file.filename}`)
