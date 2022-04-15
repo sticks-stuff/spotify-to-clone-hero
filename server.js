@@ -47,7 +47,9 @@ app.post("/upload", upload.single("data"), (req, res) => {
 				.send()
 				.end(response=> {
 					var json = response.body
-					unirest.get(`https://spclient.wg.spotify.com/color-lyrics/v2/track/${req.body.song}`)
+                    var songid = req.body.song.split("https://open.spotify.com/track/")[1]
+                    songid = songid.split('?')[0]
+					unirest.get(`https://spclient.wg.spotify.com/color-lyrics/v2/track/${songid}`)
 						.headers({'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${json.accessToken}`, 'app-platform': 'WebPlayer', 'User-Agent': 'spotify lyrics to clone hero'})
 						.send()
 						.end(lyric_response=> {
@@ -61,7 +63,7 @@ app.post("/upload", upload.single("data"), (req, res) => {
 								})
 								ChartIO.save(chart, `uploads/${req.file.filename}`)
 								let rs = fs.createReadStream(`uploads/${req.file.filename}`)
-								res.attachment(req.file.filename)
+								res.attachment(req.file.originalname)
 								rs.pipe(res)
 							})
 						})
