@@ -85,4 +85,4 @@ app.post("/upload", upload.single("data"), (req, res) => {
 })
 
 // Start the server
-app.listen(port, () => console.log(`file uploader listening at http://localhost:${port}`))
+app.listen(PORT, () => console.log(`file uploader listening at http://localhost:${PORT}`))
