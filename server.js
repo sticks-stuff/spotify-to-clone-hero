@@ -38,7 +38,7 @@ const upload = multer({ storage: storage }) // { destination: "uploads/"}
 // Setup the upload route
 app.post("/upload", upload.single("data"), (req, res) => {
 	console.log(req.body)
-    if (req.file) {
+    if (req.file && req.body.song) {
         try {
 			// const raw = fs.readFileSync(`uploads/${req.file.filename}`)
 			// console.log(raw.toString())
@@ -53,19 +53,27 @@ app.post("/upload", upload.single("data"), (req, res) => {
 						.headers({'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${json.accessToken}`, 'app-platform': 'WebPlayer', 'User-Agent': 'spotify lyrics to clone hero'})
 						.send()
 						.end(lyric_response=> {
-							ChartIO.load(`uploads/${req.file.filename}`).then(chart => {
-								lyric_response.body.lyrics.lines.forEach(element => {
-									chart.Events[parseInt(chart.secondsToPosition(element.startTimeMs / 1000))] = [
-										{ type: 'E', name: 'phrase_end' },
-										{ type: 'E', name: 'phrase_start' },
-										{ type: 'E', name: `lyric ${element.words.replace(/"/g, "'\'").replace(/-/g, '=')}` } //double quotes no worky in ch so have to replace them and hyphens are used for sylables so have to replace those too
-									]
-								})
-								ChartIO.save(chart, `uploads/${req.file.filename}`)
-								let rs = fs.createReadStream(`uploads/${req.file.filename}`)
-								res.attachment(req.file.originalname)
-								rs.pipe(res)
-							})
+                            if(lyric_response.length > 0) {
+                                ChartIO.load(`uploads/${req.file.filename}`).then(chart => {
+                                    lyric_response.body.lyrics.lines.forEach(element => {
+                                        chart.Events[parseInt(chart.secondsToPosition(element.startTimeMs / 1000))] = [
+                                            { type: 'E', name: 'phrase_end' },
+                                            { type: 'E', name: 'phrase_start' },
+                                            { type: 'E', name: `lyric ${element.words.replace(/"/g, "'\'").replace(/-/g, '=')}` } //double quotes no worky in ch so have to replace them and hyphens are used for sylables so have to replace those too
+                                        ]
+                                    })
+                                    ChartIO.save(chart, `uploads/${req.file.filename}`)
+                                    let rs = fs.createReadStream(`uploads/${req.file.filename}`)
+                                    res.attachment(req.file.originalname)
+                                    rs.pipe(res)
+                                })
+                            }
+							else {
+                                res.status(500).send({
+                                    ok: false,
+                                    error: "No lyrics available for that song!"
+                                })
+                            }
 						})
 				})
         } catch (ex) {
@@ -79,7 +87,7 @@ app.post("/upload", upload.single("data"), (req, res) => {
         }
     } else {
         res.status(400).send({ ok: false,
-            error: "Please upload a file"
+            error: "Please upload a file and provide a song"
         })
     }
 })
