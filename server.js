@@ -53,7 +53,8 @@ app.post("/upload", upload.single("data"), (req, res) => {
 						.headers({'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${json.accessToken}`, 'app-platform': 'WebPlayer', 'User-Agent': 'spotify lyrics to clone hero'})
 						.send()
 						.end(lyric_response=> {
-                            if(lyric_response.length > 0) {
+                            console.log(lyric_response)
+                            if(lyric_response.body.lyrics.lines.length > 0) {
                                 ChartIO.load(`uploads/${req.file.filename}`).then(chart => {
                                     lyric_response.body.lyrics.lines.forEach(element => {
                                         chart.Events[parseInt(chart.secondsToPosition(element.startTimeMs / 1000))] = [
