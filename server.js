@@ -53,7 +53,6 @@ app.post("/upload", upload.single("data"), (req, res) => {
 						.headers({'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': `Bearer ${json.accessToken}`, 'app-platform': 'WebPlayer', 'User-Agent': 'spotify lyrics to clone hero'})
 						.send()
 						.end(lyric_response=> {
-                            console.log(lyric_response)
                             if(lyric_response.body.lyrics.lines.length > 0) {
                                 ChartIO.load(`uploads/${req.file.filename}`).then(chart => {
                                     lyric_response.body.lyrics.lines.forEach(element => {
@@ -64,9 +63,13 @@ app.post("/upload", upload.single("data"), (req, res) => {
                                         ]
                                     })
                                     ChartIO.save(chart, `uploads/${req.file.filename}`)
+                                    console.log(fs.statSync(`uploads/${req.file.filename}`))
                                     let rs = fs.createReadStream(`uploads/${req.file.filename}`)
-                                    res.attachment(req.file.originalname)
-                                    rs.pipe(res)
+                                    rs.on('open', (fd) => {
+                                        res.attachment(req.file.originalname)
+                                        rs.pipe(res)
+                                        rs.on('finish', function () { rs.close() });
+                                    });
                                 })
                             }
 							else {
