@@ -16,7 +16,7 @@ def get_lyrics_instagram(id,auth):
     }
 
     response = requests.request("GET", url, headers=headers)
-    print(response.content)
+    # print(response.content)
     assert response.status_code == 200
 
     return json.loads(response.content)
@@ -83,10 +83,10 @@ def uncensor_lyrics(lyrics, spotify_lyrics):
                     found = 1
                     break
             if(found == 0): 
-                print("OLD " + value)
+                # print("OLD " + value)
                 firstPos = value.find('*') 
                 secondPos = value.rfind('*')
-                print("WEE WOO")
+                # print("WEE WOO")
                 for line in spotify_lyrics["lyrics"]['lines']:
                     words = line['words']
                     # print(words)
@@ -97,7 +97,7 @@ def uncensor_lyrics(lyrics, spotify_lyrics):
                             if('*' in value_list[i]):
                                 value_list[i] = words_list[i]
                         potential = " ".join(value_list)
-                        print("NEW " + potential)
+                        # print("NEW " + potential)
                         key['phrase'] = potential
                         found = 1
                         break
@@ -190,7 +190,7 @@ def double_search(query, instagram_auth, spotify_auth):
     for result in instagram_search_result["items"]:
         track = result["track"]
         if track["has_lyrics"] == "False": break
-        print("CHECKING " + track["title"])
+        # print("CHECKING " + track["title"])
         for spotify_track in spotify_search_result["tracks"]["items"]:
             if similar(track["title"], spotify_track["name"]) > 0.9 and similar(track["display_artist"], spotify_track["artists"][0]["name"]) > 0.5:
                 matched += 1
@@ -201,11 +201,11 @@ def double_search(query, instagram_auth, spotify_auth):
                 info["spotify_id"] = spotify_track["id"]
                 info["instagram_id"] = track["id"]
                 double_search_result.append(info)
-                print("MATCHED " + track["title"] + " WITH " + spotify_track["name"])
+                # print("MATCHED " + track["title"] + " WITH " + spotify_track["name"])
                 break
-    print("matched " + str(matched) + " out of 30")
+    # print("matched " + str(matched) + " out of 30")
     return double_search_result
 
-spotify_auth = get_token_spotify(os.getenv("cookie_spotify"))
-double_search_result = double_search('stupid for you', os.getenv("instagram_auth_token"), spotify_auth)
-print(json.dumps(double_search_result))
+# spotify_auth = get_token_spotify(os.getenv("cookie_spotify"))
+# double_search_result = double_search('stupid for you', os.getenv("instagram_auth_token"), spotify_auth)
+# print(json.dumps(double_search_result))

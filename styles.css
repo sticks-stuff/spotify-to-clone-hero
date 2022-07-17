@@ -1,0 +1,33 @@
+form input {
+  max-width: 500px;
+}
+
+form fieldset {
+  max-width: -webkit-max-content;
+  max-width: -moz-max-content;
+  max-width: max-content;
+}
+
+form fieldset div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px;
+  margin-inline: 2px;
+  padding-block: 0.35em 0.625em;
+  padding-inline: 0.75em;
+  border: 2px groove ThreeDFace;
+  min-inline-size: -webkit-min-content;
+  min-inline-size: -moz-min-content;
+  min-inline-size: min-content;
+}
+
+form fieldset div img {
+  margin: 5px;
+  width: 50px;
+  height: 50px;
+}
+/*# sourceMappingURL=styles.css.map */

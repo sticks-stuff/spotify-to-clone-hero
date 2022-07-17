@@ -1,0 +1,7 @@
+chparse>=0.0.3
+Flask>=2.1.0
+Flask_Cors>=3.0.10
+requests>=2.24.0
+six>=1.15.0
+Werkzeug>=1.0.1
+python-dotenv>=0.20.0

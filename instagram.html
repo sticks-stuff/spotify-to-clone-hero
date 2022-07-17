@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instagram lyrics to Clone Hero</title>
+	<link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <h1>Instagram lyrics to Clone Hero</h1>
+    <form action="https://ig-ch.herokuapp.com/upload" enctype="multipart/form-data" method="POST">
+		<label for="song">search for a song</label>
+		<input type="text" id="query" name="song" value="">
+		<button type="button" onclick="search()">search</button>
+		<br>
+		<fieldset id="song-list">
+			<legend>Select a song:</legend>
+		</fieldset>
+		<br>
+		<label for="file">Chart file (.chart or .mid)</label>
+		<input type="file" required="required" accept=".mid,.chart" name="file"/>
+		<br>
+		<br>
+		<input type="submit" value="Upload" />
+    </form>
+    <br>
+    <a href="https://github.com/sticks-stuff/spotify-to-clone-hero">source</a>
+    <br>
+    <a href="https://twitter.com/stick_twt">@stick_twt</a>
+	<script>
+
+		function search() {
+			let query = document.getElementById("query").value
+			let data = {query: query};
+
+			var song_list = document.getElementById("song-list")
+			while (song_list.childNodes.length > 1) {
+				song_list.removeChild(song_list.lastChild);
+			}
+		
+			fetch("https://ig-ch.herokuapp.com/search", {
+				method: "POST",
+				headers: {'Content-Type': 'application/json'}, 
+				body: JSON.stringify(data)
+			}).then(res => {
+				res.json().then(result => {
+					console.log(result)
+					for(i = 0; i < result.length; i++) {
+						var input = document.createElement("input")
+						input.type = "radio"
+						input.name = "song-ids"
+						input.required = "required"
+						input.value = result[i].spotify_id + "\\" + result[i].instagram_id
+
+						var image = document.createElement("img")
+						image.src = result[i].cover_art
+
+						var title = document.createElement("label")
+						title.for = result[i].spotify_id + "\\" + result[i].instagram_id
+						title.innerHTML = result[i].title
+
+						var dash = document.createElement("label")
+						dash.for = result[i].spotify_id + "\\" + result[i].instagram_id
+						dash.innerHTML = "&nbsp;-&nbsp;"
+
+						var artist = document.createElement("label")
+						artist.for = result[i].spotify_id + "\\" + result[i].instagram_id
+						artist.innerHTML = result[i].artist
+
+						var div = document.createElement("div")
+						div.append(input, image, title, dash, artist)
+
+						song_list.append(div)
+					}
+				});
+			});
+		}
+	
+	</script>
+  </body>
+</html>
